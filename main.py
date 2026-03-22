@@ -1,63 +1,38 @@
-from typing import Callable, Any
-from commands import CmdOutput, CMD_REGISTRY
+from transport import CliTransport
+from commands import CMD_REGISTRY
 from robo import RoboSim
+from command_adaptor import RoboSimCommandAdaptor
 
-def read_input(fn: Callable[[str], str]) -> str:
-    return fn('Enter your command ')
-
-def write_instructions(fn: Callable[[str], None]) -> None:
-    return fn('''
+def get_instructions() -> str:
+    return '''
 You can enter one of the below commands. Note that all other commands will be ignored until a valid PLACE command is seen:
     PLACE X, Y -> to place robot on the Grid
     MOVE -> to move robot one cell in front of it
     LEFT -> to rotate the robot towards left without moving the robot
     RIGHT -> to rotate the robot towards right without moving the robot
     REPORT -> to report the current location and direction of the robot     
-''')
-
-def write_output(out: CmdOutput, fn: Callable[[str], None]):
-    fn(str(out))
-
-def write_error(out: Any, fn: Callable[[str], None]):
-    fn(str(out))
+'''
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
+    transport = CliTransport('Enter a new command:\n')
     sim = RoboSim()
+    RoboSimCommandAdaptor.configure(sim, CMD_REGISTRY, print)
 
     while True:
 
-        write_instructions(print)
-        input_cmd = read_input(input).strip()
+        transport.write(get_instructions())
+        input_cmd = transport.read().strip().upper()
 
         if len(input_cmd) == 0:
             print('Please enter a valid command.')
             continue
 
-        normalized_cmd = input_cmd.upper()
-        print(f'Command entered: {normalized_cmd}')
-
-        cmd_code, *cmd_raw_args = normalized_cmd.split()
-
-        if cmd_code == 'EXIT':
+        if input_cmd == 'EXIT':
             break
 
-        print(f'Command received: {cmd_code}, {cmd_raw_args}')
-
         try:
-
-            if cmd_code not in CMD_REGISTRY.keys():
-                raise ValueError('Command not identified.')
-
-            cmd = CMD_REGISTRY[cmd_code]
-
-            raw = cmd_raw_args[0] if cmd_raw_args else ''
-            parsed_args = cmd.parse(raw)
-            print(f'Parsed args: {parsed_args}')
-
-            output = cmd.execute(sim, parsed_args)
-            write_output(output, print)
-
+            RoboSimCommandAdaptor.process_command(input_cmd)
         except ValueError as e:
-            write_error(e, print)
+            transport.write_error(str(e))

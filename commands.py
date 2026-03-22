@@ -33,8 +33,20 @@ def parse_place_args(raw_args: str) -> PlaceCmdArgs:
 
     parts = raw_args.strip().split(',')
 
+    if len(parts) < 3:
+        raise ValueError('PLACE requires exactly 3 args i.e. X,Y,Direction')
+
     x, y, direction = parts
-    pos = GridPosition(x, y, GridOrientation[direction])
+
+    if not direction:
+        raise ValueError('PLACE seems to have invalid direction argument.')
+    
+    try:
+        pos = GridOrientation[direction]
+    except KeyError:
+        raise ValueError('PLACE seems to have invalid direction argument.')
+
+    pos = GridPosition(x, y, pos)
 
     return PlaceCmdArgs(parts, pos)
 

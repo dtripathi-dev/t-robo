@@ -12,3 +12,4 @@ class GridPosition:
     x: str
     y: str
     d: GridOrientation
+
