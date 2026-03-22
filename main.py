@@ -1,5 +1,5 @@
-from typing import Callable, Any, cast
-from commands import CmdOutput, CMD_REGISTRY, CmdWithArgs, PlaceCmdArgs, CmdArgs
+from typing import Callable, Any
+from commands import CmdOutput, CMD_REGISTRY
 from robo import RoboSim
 
 def read_input(fn: Callable[[str], str]) -> str:
@@ -52,17 +52,11 @@ if __name__ == '__main__':
 
             cmd = CMD_REGISTRY[cmd_code]
 
-            if isinstance(cmd, CmdWithArgs):
-                raw = cmd_raw_args[0] if cmd_raw_args else ''
-                parsed_args = cmd.parse(raw)
-                print(f'Parsed args: {parsed_args}')
-                if cmd.code == 'PLACE':
-                    output = cast(CmdWithArgs[PlaceCmdArgs], cmd).execute(sim, cast(PlaceCmdArgs, parsed_args))
-                else:
-                    output = cast(CmdWithArgs[CmdArgs], cmd).execute(sim, cast(CmdArgs, parsed_args))
-            else:
-                output = cmd.execute(sim)
+            raw = cmd_raw_args[0] if cmd_raw_args else ''
+            parsed_args = cmd.parse(raw)
+            print(f'Parsed args: {parsed_args}')
 
+            output = cmd.execute(sim, parsed_args)
             write_output(output, print)
 
         except ValueError as e:
