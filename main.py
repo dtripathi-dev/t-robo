@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
     transport = CliTransport('Enter a new command:\n')
     sim = RoboSim()
-    RoboSimCommandAdaptor.configure(sim, CMD_REGISTRY, print)
+    RoboSimCommandAdaptor.configure(sim, CMD_REGISTRY, transport.write)
 
     while True:
 
