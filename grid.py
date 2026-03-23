@@ -9,7 +9,7 @@ class GridOrientation(Enum):
 
 @dataclass
 class GridPosition:
-    x: str
-    y: str
+    x: int
+    y: int
     d: GridOrientation
 

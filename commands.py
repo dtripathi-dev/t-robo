@@ -4,15 +4,24 @@ from dataclasses import dataclass
 from grid import GridOrientation, GridPosition
 from robo import RoboSim
 
+from functools import cached_property
 from copy import deepcopy
 
 @dataclass
 class CmdArgs:
-    args: list[str] | None
+    args: list[str]
 
 @dataclass
 class PlaceCmdArgs(CmdArgs):
-    pos: GridPosition
+    # pos: GridPosition | None = None
+    @cached_property
+    def pos(self) -> GridPosition:
+        if not self.args:
+            raise ValueError('PLACE requires x, y, direction')
+        if len(self.args) < 3:
+            raise ValueError('PLACE requires x, y, direction')
+        x, y, d = self.args
+        return GridPosition(int(x), int(y), GridOrientation[d])
 
 @dataclass
 class CmdOutput:
@@ -46,16 +55,16 @@ def parse_place_args(raw_args: str) -> PlaceCmdArgs:
     except KeyError:
         raise ValueError('PLACE seems to have invalid direction argument.')
 
-    pos = GridPosition(x, y, pos)
+    pos = GridPosition(int(x), int(y), pos)
 
-    return PlaceCmdArgs(parts, pos)
+    return PlaceCmdArgs(parts)
 
 def execute_place(sim: RoboSim, args: PlaceCmdArgs) -> CmdOutput:
     sim.addRobo(args.pos)
     return CmdOutput(True, None)
 
 def parse_report(_: str) -> CmdArgs:
-    return CmdArgs(None)
+    return CmdArgs([])
 
 def execute_report(sim: RoboSim, _: CmdArgs) -> CmdOutput:
     snap = sim.snapshot()
