@@ -3,21 +3,22 @@ from dataclasses import dataclass
 from functools import cached_property
 
 from .base import CmdArgs, Cmd, CmdOutput
-
-from grid import GridOrientation, GridPosition
 from robo import RoboSimLike
 
 @dataclass
 class PlaceCmdArgs(CmdArgs):
-    # pos: GridPosition | None = None
+
     @cached_property
-    def pos(self) -> GridPosition:
-        if not self.args:
-            raise ValueError('PLACE requires x, y, direction')
-        if len(self.args) < 3:
-            raise ValueError('PLACE requires x, y, direction')
-        x, y, d = self.args
-        return GridPosition(int(x), int(y), GridOrientation[d])
+    def x(self) -> int:
+        return int(self.args[0])
+    
+    @cached_property
+    def y(self) -> int:
+        return int(self.args[1])
+    
+    @cached_property
+    def direction(self) -> str:
+        return str(self.args[2])
 
 class PlaceCmd(Cmd[PlaceCmdArgs]):
 
@@ -33,21 +34,9 @@ class PlaceCmd(Cmd[PlaceCmdArgs]):
         if len(parts) < 3:
             raise ValueError('PLACE requires exactly 3 args i.e. X,Y,Direction')
 
-        x, y, direction = parts
-
-        if not direction:
-            raise ValueError('PLACE seems to have invalid direction argument.')
-        
-        try:
-            pos = GridOrientation[direction]
-        except KeyError:
-            raise ValueError('PLACE seems to have invalid direction argument.')
-
-        pos = GridPosition(int(x), int(y), pos)
-
         return PlaceCmdArgs(parts)
     
     @classmethod
     def execute(cls, sim: RoboSimLike, parsed_args: PlaceCmdArgs) -> CmdOutput:
-        sim.addRobo(parsed_args.pos)
+        sim.addRobo(parsed_args.x, parsed_args.y, parsed_args.direction)
         return CmdOutput(True, None)
