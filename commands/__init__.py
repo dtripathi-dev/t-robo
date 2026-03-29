@@ -2,7 +2,7 @@ from .custom_types import TypeCmd, TypeRegistry
 from .base import Cmd, CmdArgs, CmdOutput
 from .report import ReportCmd
 from .place import PlaceCmdArgs, PlaceCmd
-from .registry import registry
+from .registry import register_command, Registry
 
 
 __all__ = [
@@ -10,5 +10,5 @@ __all__ = [
     "Cmd", "CmdArgs", "CmdOutput",
     "ReportCmd",
     "PlaceCmd", "PlaceCmdArgs",
-    "registry"
+    "Registry", "register_command"
 ]

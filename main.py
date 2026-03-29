@@ -1,5 +1,5 @@
 from transport import CliTransport
-from commands import registry
+from commands import Registry
 from robo import RoboSim
 from command_adaptor import RoboSimCommandAdaptor
 
@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
     transport = CliTransport('Enter a new command:\n')
     sim = RoboSim()
-    RoboSimCommandAdaptor.configure(sim, registry, print)
+    RoboSimCommandAdaptor.configure(sim, Registry.all(), print)
 
     while True:
 

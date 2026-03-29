@@ -4,6 +4,7 @@ from functools import cached_property
 
 from .base import CmdArgs, Cmd, CmdOutput
 from robo import RoboSimLike
+from .registry import register_command
 
 @dataclass
 class PlaceCmdArgs(CmdArgs):
@@ -20,6 +21,7 @@ class PlaceCmdArgs(CmdArgs):
     def direction(self) -> str:
         return str(self.args[2])
 
+@register_command
 class PlaceCmd(Cmd[PlaceCmdArgs]):
 
     code: ClassVar[str] = 'PLACE'

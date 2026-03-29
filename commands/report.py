@@ -3,7 +3,9 @@ from copy import deepcopy
 
 from robo import RoboSimLike
 from .base import Cmd, CmdArgs, CmdOutput
+from .registry import register_command
 
+@register_command
 class ReportCmd(Cmd[CmdArgs]):
         
     code: ClassVar[str] = 'REPORT'
