@@ -1,16 +1,16 @@
-from robo import RoboSim
-from commands import Cmd
-from typing import Callable, Any
-from custom_types import TypeRegistry, TypeWriter
+from robo import RoboSimLike
+from typing import Callable
+from commands import TypeRegistry, TypeCmd
+from transport import TypeWriter
 
 
 class RoboSimCommandAdaptor:
-    registry: dict[str, Cmd[Any]]
-    sim: RoboSim
+    registry: dict[str, TypeCmd]
+    sim: RoboSimLike
     writer: Callable[[str], None]
 
     @classmethod
-    def configure(cls, sim: RoboSim, registry: TypeRegistry, writer: TypeWriter):
+    def configure(cls, sim: RoboSimLike, registry: TypeRegistry, writer: TypeWriter):
         cls.sim = sim
         cls.writer = writer
         cls.registry = registry

@@ -1,10 +1,16 @@
+from typing import Any, TypeAlias, Protocol
 from copy import deepcopy
 
-from custom_types import SimSnapshot
 from grid import GridPosition
 
+SimSnapshot: TypeAlias = dict[str, Any]
 
-class RoboSim:
+
+class RoboSimLike(Protocol):
+    def snapshot(self) -> SimSnapshot: ...
+    def addRobo(self, pos: GridPosition) -> None: ...
+
+class RoboSim(RoboSimLike):
     
     robo: GridPosition | None = None
     

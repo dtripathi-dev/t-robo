@@ -1,10 +1,11 @@
-from typing import Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable, TypeAlias, Callable
+
+TypeWriter: TypeAlias = Callable[[str], None]
 
 @runtime_checkable
 class Transport(Protocol):
     def read(self) -> str: ...
     def write(self, message: str) -> None: ...
-    def write_error(self, message: str) -> None: ...
 
 
 class CliTransport(Transport):
@@ -15,7 +16,4 @@ class CliTransport(Transport):
         return input(self.prompt).strip().upper()
 
     def write(self, message: str) -> None:
-        print(message)
-
-    def write_error(self, message: str) -> None:
         print(message)
