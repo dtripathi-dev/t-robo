@@ -1,14 +1,7 @@
-from typing import Any, TypeAlias, Protocol
 from copy import deepcopy
 
+from commands import SimSnapshot, RoboSimLike
 from grid import GridPosition, GridOrientation
-
-SimSnapshot: TypeAlias = dict[str, Any]
-
-
-class RoboSimLike(Protocol):
-    def snapshot(self) -> SimSnapshot: ...
-    def addRobo(self, x: int, y: int, dir: str) -> None: ...
 
 class RoboSim(RoboSimLike):
     
@@ -25,3 +18,23 @@ class RoboSim(RoboSimLike):
             raise ValueError(f'Invalid direction: {dir}')
         
         self.robo = GridPosition(x, y, GridOrientation[dir])
+
+    def moveRobo(self) -> SimSnapshot:
+        if self.robo is not None:
+            # x, y, d = self.robo.x, self.robo.y, self.robo.d
+            x, y, d = self.robo.as_tuple()
+
+            match d:
+                case GridOrientation.NORTH:
+                    self.addRobo(x, y + 1, d.name)
+
+                case GridOrientation.EAST:
+                    self.addRobo(x + 1, y, d.name)
+
+                case GridOrientation.SOUTH:
+                    self.addRobo(x, y - 1, d.name)
+
+                case GridOrientation.WEST:
+                    self.addRobo(x - 1, y, d.name)
+
+        return self.snapshot()

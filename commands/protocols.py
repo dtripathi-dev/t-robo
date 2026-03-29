@@ -1,0 +1,9 @@
+from typing import Protocol, TypeAlias, Any
+
+SimSnapshot: TypeAlias = dict[str, Any]
+
+class RoboSimLike(Protocol):
+    def snapshot(self) -> SimSnapshot: ...
+    def addRobo(self, x: int, y: int, dir: str) -> None: ...
+    def moveRobo(self) -> SimSnapshot: ... 
+        
